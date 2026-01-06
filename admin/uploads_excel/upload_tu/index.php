@@ -13,7 +13,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Data Panitia - SiPagu Admin</title>
+    <title>Upload Transaksi Ujian - SiPagu Admin</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -26,26 +26,29 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
         }
         .file-info {
             background: #f8f9fa;
-            border-left: 4px solid #7209b7;
+            border-left: 4px solid #f72585;
             padding: 15px;
             border-radius: 5px;
         }
         .btn-upload {
-            background: linear-gradient(135deg, #7209b7 0%, #560bad 100%);
+            background: linear-gradient(135deg, #f72585 0%, #b5179e 100%);
             border: none;
             padding: 10px 30px;
             font-weight: 600;
         }
         .btn-upload:hover {
-            background: linear-gradient(135deg, #560bad 0%, #7209b7 100%);
+            background: linear-gradient(135deg, #b5179e 0%, #f72585 100%);
         }
         .template-link {
-            color: #7209b7;
+            color: #f72585;
             text-decoration: none;
             font-weight: 500;
         }
         .template-link:hover {
             text-decoration: underline;
+        }
+        .col-highlight {
+            background-color: #fff5f7 !important;
         }
     </style>
 </head>
@@ -58,11 +61,11 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
             <div class="main-content">
                 <section class="section">
                     <div class="section-header">
-                        <h1>Upload Data Panitia</h1>
+                        <h1>Upload Transaksi Ujian</h1>
                         <div class="section-header-breadcrumb">
                             <div class="breadcrumb-item active"><a href="../../index.php">Dashboard</a></div>
                             <div class="breadcrumb-item">Uploads Excel</div>
-                            <div class="breadcrumb-item">Upload Data Panitia</div>
+                            <div class="breadcrumb-item">Upload Transaksi Ujian</div>
                         </div>
                     </div>
 
@@ -71,8 +74,8 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
                             <div class="col-12">
                                 <div class="card upload-card">
                                     <div class="card-header">
-                                        <h4>Upload File Excel Data Panitia</h4>
-                                        <p class="text-muted mb-0">Data honor panitia ujian</p>
+                                        <h4>Upload File Excel Transaksi Ujian</h4>
+                                        <p class="text-muted mb-0">Data transaksi ujian per semester</p>
                                     </div>
                                     <div class="card-body">
                                         <form action="process.php" method="POST" enctype="multipart/form-data" id="uploadForm">
@@ -82,18 +85,36 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
                                                         <label for="filexls" class="form-label fw-bold">Pilih File Excel</label>
                                                         <input type="file" class="form-control" id="filexls" name="filexls" accept=".xls,.xlsx" required>
                                                         <div class="form-text">
-                                                            Format file: .xls atau .xlsx
+                                                            Baris pertama adalah header, data mulai dari baris ke-2
                                                         </div>
+                                                    </div>
+                                                    
+                                                    <!-- Semester Filter (Optional) -->
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-bold">Filter Semester</label>
+                                                        <select class="form-select" name="semester_filter">
+                                                            <option value="">Semua Semester</option>
+                                                            <option value="20231">2023/2024 Ganjil</option>
+                                                            <option value="20232">2023/2024 Genap</option>
+                                                            <option value="20241">2024/2025 Ganjil</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="file-info">
                                                         <h6><i class="fas fa-info-circle me-2"></i>Format File Excel:</h6>
                                                         <ul class="mb-0">
-                                                            <li>Kolom B: Jabatan Panitia</li>
-                                                            <li>Kolom C: Honor Standard</li>
-                                                            <li>Kolom D: Honor P1</li>
-                                                            <li>Kolom E: Honor P2</li>
+                                                            <li>Kolom B: Semester</li>
+                                                            <li>Kolom C: ID Panitia</li>
+                                                            <li>Kolom D: ID User</li>
+                                                            <li>Kolom E: Jml Mhs Prodi</li>
+                                                            <li>Kolom F: Jml Mhs</li>
+                                                            <li>Kolom G: Jml Koreksi</li>
+                                                            <li>Kolom H: Jml Matkul</li>
+                                                            <li>Kolom I: Jml PGWS Pagi</li>
+                                                            <li>Kolom J: Jml PGWS Sore</li>
+                                                            <li>Kolom K: Jml Koor Pagi</li>
+                                                            <li>Kolom L: Jml Koor Sore</li>
                                                         </ul>
                                                         <div class="mt-3">
                                                             <a href="#" class="template-link">
@@ -107,7 +128,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
                                             <!-- Status Messages -->
                                             <div id="messageContainer">
                                 <?php
-                                // Tampilkan pesan dari session jika ada
                                 if (isset($_SESSION['upload_message'])) {
                                     echo $_SESSION['upload_message'];
                                     unset($_SESSION['upload_message']);
@@ -121,7 +141,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
                                                     <i class="fas fa-arrow-left me-2"></i>Kembali
                                                 </a>
                                                 <button type="submit" name="submit" class="btn btn-upload">
-                                                    <i class="fas fa-upload me-2"></i>Upload Data Panitia
+                                                    <i class="fas fa-upload me-2"></i>Upload Transaksi Ujian
                                                 </button>
                                             </div>
                                         </form>
@@ -129,55 +149,79 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
                                     <div class="card-footer bg-light">
                                         <small class="text-muted">
                                             <i class="fas fa-exclamation-circle me-1"></i>
-                                            Data duplikat (berdasarkan jabatan) akan dilewati.
+                                            Data akan dicek duplikat berdasarkan semester, id_panitia, dan id_user
                                         </small>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Data Preview -->
+                        <!-- Statistics -->
                         <div class="row mt-4">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h4>Data Panitia Terakhir</h4>
-                                        <a href="#" class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-eye me-1"></i> Lihat Semua
-                                        </a>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card card-statistic-1">
+                                    <div class="card-icon bg-primary">
+                                        <i class="fas fa-file-import"></i>
                                     </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-striped">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Jabatan</th>
-                                                        <th>Honor Standard</th>
-                                                        <th>Honor P1</th>
-                                                        <th>Honor P2</th>
-                                                        <th>Status</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php
-                                                    // Query data panitia terakhir
-                                                    $query = mysqli_query($koneksi, "SELECT * FROM t_pnt ORDER BY id_pnt DESC LIMIT 5");
-                                                    if (mysqli_num_rows($query) > 0) {
-                                                        while ($row = mysqli_fetch_assoc($query)) {
-                                                            echo '<tr>';
-                                                            echo '<td>' . htmlspecialchars($row['jbtn_pnt']) . '</td>';
-                                                            echo '<td>' . number_format($row['honor_std'], 0, ',', '.') . '</td>';
-                                                            echo '<td>' . number_format($row['honor_p1'], 0, ',', '.') . '</td>';
-                                                            echo '<td>' . number_format($row['honor_p2'], 0, ',', '.') . '</td>';
-                                                            echo '<td><span class="badge bg-success">Aktif</span></td>';
-                                                            echo '</tr>';
-                                                        }
-                                                    } else {
-                                                        echo '<tr><td colspan="5" class="text-center text-muted">Belum ada data panitia</td></tr>';
-                                                    }
-                                                    ?>
-                                                </tbody>
-                                            </table>
+                                    <div class="card-wrap">
+                                        <div class="card-header">
+                                            <h4>Total Upload</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <?php
+                                            $query = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM transaksi_ujian");
+                                            $row = mysqli_fetch_assoc($query);
+                                            echo $row['total'];
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card card-statistic-1">
+                                    <div class="card-icon bg-success">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="card-header">
+                                            <h4>Semester Aktif</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            20241
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card card-statistic-1">
+                                    <div class="card-icon bg-warning">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="card-header">
+                                            <h4>Data User</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <?php
+                                            $query = mysqli_query($koneksi, "SELECT COUNT(DISTINCT id_user) as total FROM transaksi_ujian");
+                                            $row = mysqli_fetch_assoc($query);
+                                            echo $row['total'];
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card card-statistic-1">
+                                    <div class="card-icon bg-info">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="card-header">
+                                            <h4>Update Terakhir</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <?php echo date('d/m/Y'); ?>
                                         </div>
                                     </div>
                                 </div>
@@ -198,6 +242,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
             
             if (file) {
                 const fileName = file.name;
+                const fileSize = (file.size / (1024*1024)).toFixed(2); // MB
                 const fileExt = fileName.split('.').pop().toLowerCase();
                 
                 if (!['xls', 'xlsx'].includes(fileExt)) {
@@ -209,11 +254,20 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
                         </div>
                     `;
                     e.target.value = '';
+                } else if (fileSize > 10) {
+                    messageContainer.innerHTML = `
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            File terlalu besar (${fileSize} MB). Maksimal 10 MB
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    `;
+                    e.target.value = '';
                 } else {
                     messageContainer.innerHTML = `
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <i class="fas fa-check-circle me-2"></i>
-                            File <strong>${fileName}</strong> siap diupload
+                            File <strong>${fileName}</strong> (${fileSize} MB) siap diupload
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     `;

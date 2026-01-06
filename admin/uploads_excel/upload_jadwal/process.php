@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
         $err .= "Silakan pilih file Excel.";
     } else {
         $ekstensi = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-        if (!in_array($ekstensi, ['xls', 'xlsx'])) {
+        if (!in_array($ekstensi, ['xls','xlsx'])) {
             $err .= "File harus bertipe XLS atau XLSX.";
         }
     }
@@ -36,27 +36,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
             
             // PROSES SETIAP BARIS DATA (MULAI DARI BARIS 1 UNTUK MELEWATI HEADER)
             for ($i = 1; $i < count($sheetData); $i++) {
-                $semester            = trim($sheetData[$i][1] ?? '');
-                $periode_wisuda      = trim($sheetData[$i][2] ?? '');
-                $id_user             = trim($sheetData[$i][3] ?? '');
-                $prodi               = trim($sheetData[$i][4] ?? '');
-                $jml_mhs_prodi       = trim($sheetData[$i][5] ?? 0);
-                $jml_mhs_bimbingan   = trim($sheetData[$i][6] ?? 0);
-                $jml_pgji_1          = trim($sheetData[$i][7] ?? 0);
-                $jml_pgji_2          = trim($sheetData[$i][8] ?? 0);
-                $ketua_pgji          = trim($sheetData[$i][9] ?? '');
+                $jbtn_pnt  = trim($sheetData[$i][1] ?? '');
+                $honor_std = trim($sheetData[$i][2] ?? 0);
+                $honor_p1  = trim($sheetData[$i][3] ?? 0);
+                $honor_p2  = trim($sheetData[$i][4] ?? 0);
                 
                 // VALIDASI DATA WAJIB
-                if ($semester == '' || $id_user == '') {
+                if ($jbtn_pnt == '' || $honor_p1 == '' || $honor_p2 == '') {
                     continue;
                 }
                 
-                // CEGAH DUPLIKAT BERDASARKAN SEMESTER, ID_USER, DAN PRODI
+                // CEK DUPLIKAT (BERDASARKAN JABATAN)
                 $cek = mysqli_query($koneksi, "
-                    SELECT id_panitia FROM t_panitia
-                    WHERE semester='$semester'
-                    AND id_user='$id_user'
-                    AND prodi='$prodi'
+                    SELECT id_pnt 
+                    FROM t_pnt 
+                    WHERE jbtn_pnt='$jbtn_pnt'
                 ");
                 
                 if (mysqli_num_rows($cek) > 0) {
@@ -66,14 +60,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
                 
                 // INSERT DATA KE DATABASE
                 $insert = mysqli_query($koneksi, "
-                    INSERT INTO t_panitia
-                    (semester, periode_wisuda, id_user, prodi,
-                     jml_mhs_prodi, jml_mhs_bimbingan,
-                     jml_pgji_1, jml_pgji_2, ketua_pgji)
+                    INSERT INTO t_pnt
+                    (jbtn_pnt, honor_std, honor_p1, honor_p2)
                     VALUES
-                    ('$semester', '$periode_wisuda', '$id_user', '$prodi',
-                     '$jml_mhs_prodi', '$jml_mhs_bimbingan',
-                     '$jml_pgji_1', '$jml_pgji_2', '$ketua_pgji')
+                    ('$jbtn_pnt', '$honor_std', '$honor_p1', '$honor_p2')
                 ");
                 
                 if ($insert) {
@@ -82,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
             }
             
             // PESAN SUKSES
-            $success = "<i class='fas fa-check-circle mr-2'></i> Berhasil mengimport <strong>$jumlahData</strong> data panitia PA/TA baru.";
+            $success = "<i class='fas fa-check-circle mr-2'></i> Berhasil mengimport <strong>$jumlahData</strong> data jadwal lainnya baru.";
             if ($duplikatData > 0) {
                 $success .= " <strong>$duplikatData</strong> data duplikat dilewati.";
             }

@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
         $err .= "Silakan pilih file Excel.";
     } else {
         $ekstensi = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-        if (!in_array($ekstensi, ['xls', 'xlsx'])) {
+        if (!in_array($ekstensi, ['xls','xlsx'])) {
             $err .= "File harus bertipe XLS atau XLSX.";
         }
     }
@@ -36,27 +36,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
             
             // PROSES SETIAP BARIS DATA (MULAI DARI BARIS 1 UNTUK MELEWATI HEADER)
             for ($i = 1; $i < count($sheetData); $i++) {
-                $semester            = trim($sheetData[$i][1] ?? '');
-                $periode_wisuda      = trim($sheetData[$i][2] ?? '');
-                $id_user             = trim($sheetData[$i][3] ?? '');
-                $prodi               = trim($sheetData[$i][4] ?? '');
-                $jml_mhs_prodi       = trim($sheetData[$i][5] ?? 0);
-                $jml_mhs_bimbingan   = trim($sheetData[$i][6] ?? 0);
-                $jml_pgji_1          = trim($sheetData[$i][7] ?? 0);
-                $jml_pgji_2          = trim($sheetData[$i][8] ?? 0);
-                $ketua_pgji          = trim($sheetData[$i][9] ?? '');
+                $semester         = trim($sheetData[$i][1] ?? '');
+                $id_panitia       = trim($sheetData[$i][2] ?? '');
+                $id_user          = trim($sheetData[$i][3] ?? '');
+                $jml_mhs_prodi    = trim($sheetData[$i][4] ?? 0);
+                $jml_mhs          = trim($sheetData[$i][5] ?? 0);
+                $jml_koreksi      = trim($sheetData[$i][6] ?? 0);
+                $jml_matkul       = trim($sheetData[$i][7] ?? 0);
+                $jml_pgws_pagi    = trim($sheetData[$i][8] ?? 0);
+                $jml_pgws_sore    = trim($sheetData[$i][9] ?? 0);
+                $jml_koor_pagi    = trim($sheetData[$i][10] ?? 0);
+                $jml_koor_sore    = trim($sheetData[$i][11] ?? 0);
                 
                 // VALIDASI DATA WAJIB
-                if ($semester == '' || $id_user == '') {
+                if ($semester == '' || $id_panitia == '' || $id_user == '') {
                     continue;
                 }
                 
-                // CEGAH DUPLIKAT BERDASARKAN SEMESTER, ID_USER, DAN PRODI
+                // CEGAH DUPLIKAT BERDASARKAN SEMESTER, ID_PANITIA, DAN ID_USER
                 $cek = mysqli_query($koneksi, "
-                    SELECT id_panitia FROM t_panitia
+                    SELECT id_tu FROM transaksi_ujian
                     WHERE semester='$semester'
+                    AND id_panitia='$id_panitia'
                     AND id_user='$id_user'
-                    AND prodi='$prodi'
                 ");
                 
                 if (mysqli_num_rows($cek) > 0) {
@@ -66,14 +68,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
                 
                 // INSERT DATA KE DATABASE
                 $insert = mysqli_query($koneksi, "
-                    INSERT INTO t_panitia
-                    (semester, periode_wisuda, id_user, prodi,
-                     jml_mhs_prodi, jml_mhs_bimbingan,
-                     jml_pgji_1, jml_pgji_2, ketua_pgji)
+                    INSERT INTO transaksi_ujian
+                    (semester, id_panitia, id_user,
+                     jml_mhs_prodi, jml_mhs, jml_koreksi, jml_matkul,
+                     jml_pgws_pagi, jml_pgws_sore, jml_koor_pagi, jml_koor_sore)
                     VALUES
-                    ('$semester', '$periode_wisuda', '$id_user', '$prodi',
-                     '$jml_mhs_prodi', '$jml_mhs_bimbingan',
-                     '$jml_pgji_1', '$jml_pgji_2', '$ketua_pgji')
+                    ('$semester', '$id_panitia', '$id_user',
+                     '$jml_mhs_prodi', '$jml_mhs', '$jml_koreksi', '$jml_matkul',
+                     '$jml_pgws_pagi', '$jml_pgws_sore', '$jml_koor_pagi', '$jml_koor_sore')
                 ");
                 
                 if ($insert) {
@@ -82,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
             }
             
             // PESAN SUKSES
-            $success = "<i class='fas fa-check-circle mr-2'></i> Berhasil mengimport <strong>$jumlahData</strong> data panitia PA/TA baru.";
+            $success = "<i class='fas fa-check-circle mr-2'></i> Berhasil mengimport <strong>$jumlahData</strong> data transaksi ujian baru.";
             if ($duplikatData > 0) {
                 $success .= " <strong>$duplikatData</strong> data duplikat dilewati.";
             }
