@@ -1,0 +1,17 @@
+{
+    "name": "user/si-pagu",
+    "autoload": {
+        "psr-4": {
+            "User\\SiPagu\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Succy",
+            "email": "suciprawestigaluh@gmail.com"
+        }
+    ],
+    "require": {
+        "phpoffice/phpspreadsheet": "1.29"
+    }
+}

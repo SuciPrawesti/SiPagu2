@@ -1,0 +1,166 @@
+/* Import Excel Custom Styles */
+
+/* File upload styling */
+.custom-file-input:focus ~ .custom-file-label {
+    border-color: #6777ef;
+    box-shadow: 0 0 0 0.2rem rgba(103, 119, 239, 0.25);
+}
+
+.custom-file-label::after {
+    content: "Browse";
+}
+
+/* Table styling for import */
+#importHistory th {
+    background-color: #f8f9fa;
+    border-top: none;
+}
+
+#importHistory tr:hover {
+    background-color: rgba(103, 119, 239, 0.05);
+}
+
+/* Badge styling */
+.badge-success {
+    background-color: #28a745;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+}
+
+/* Preview table */
+#previewContent table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#previewContent th {
+    background-color: #6777ef;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+#previewContent td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+#previewContent tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+#previewContent tr:hover {
+    background-color: rgba(103, 119, 239, 0.1);
+}
+
+/* Progress bar */
+#importProgress {
+    height: 20px;
+    margin: 20px 0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#importProgress .progress-bar {
+    transition: width 0.3s ease;
+}
+
+/* Error message styling */
+.alert ul {
+    margin-bottom: 0;
+}
+
+.alert li {
+    margin: 5px 0;
+}
+
+/* Button styling */
+.btn-lg {
+    padding: 12px 24px;
+    font-size: 16px;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+/* Card styling */
+.card {
+    border: 1px solid #e3e6f0;
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 14px;
+    }
+    
+    .btn-lg {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}
+
+/* Loading overlay */
+.loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-overlay.active {
+    display: flex;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #6777ef;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Validation styling */
+.is-invalid {
+    border-color: #dc3545;
+}
+
+.invalid-feedback {
+    display: none;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 80%;
+    color: #dc3545;
+}
+
+.is-invalid ~ .invalid-feedback {
+    display: block;
+}
