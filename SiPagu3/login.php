@@ -222,10 +222,10 @@ $page_title = "Login - SiPagu";
         </div>
     </footer>
 
-    <script src="<?php echo asset_url('js/landing.js'); ?>"></script>
+    <script src="<?php echo asset_url('js/custom.js'); ?>"></script>
     
     <script>
-        // Pastikan DOM sudah sepenuhnya dimuat
+        // DOM Content Loaded untuk Login Page
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM Content Loaded - Login Page');
             
@@ -334,34 +334,6 @@ $page_title = "Login - SiPagu";
             if (urlParams.has('success')) {
                 const successMessage = urlParams.get('success');
                 showAlert('success', decodeURIComponent(successMessage));
-            }
-            
-            // Mobile menu toggle (same as landing page)
-            const hamburgerMenu = document.getElementById('hamburgerMenu');
-            const navLinks = document.getElementById('navLinks');
-            const menuOverlay = document.getElementById('menuOverlay');
-            
-            if (hamburgerMenu && navLinks && menuOverlay) {
-                hamburgerMenu.addEventListener('click', function() {
-                    navLinks.classList.toggle('active');
-                    menuOverlay.classList.toggle('active');
-                    hamburgerMenu.classList.toggle('active');
-                });
-                
-                menuOverlay.addEventListener('click', function() {
-                    navLinks.classList.remove('active');
-                    menuOverlay.classList.remove('active');
-                    hamburgerMenu.classList.remove('active');
-                });
-                
-                // Close mobile menu when clicking on links
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    link.addEventListener('click', function() {
-                        navLinks.classList.remove('active');
-                        menuOverlay.classList.remove('active');
-                        hamburgerMenu.classList.remove('active');
-                    });
-                });
             }
         });
     </script>
