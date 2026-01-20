@@ -428,7 +428,137 @@ const UploadManager = {
     }
 };
 
-// Initialize when DOM is loaded
+// ===========================================
+// MOBILE MENU TOGGLE FIX
+// ===========================================
+
+const MobileMenuManager = {
+    isMenuOpen: false,
+    
+    init: function() {
+        this.initMobileMenu();
+    },
+    
+    initMobileMenu: function() {
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+        const navLinks = document.getElementById('navLinks');
+        const menuOverlay = document.getElementById('menuOverlay');
+        
+        if (!hamburgerMenu || !navLinks || !menuOverlay) return;
+        
+        // Event listener untuk hamburger menu
+        hamburgerMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleMenu();
+        });
+        
+        // Event listener untuk overlay
+        menuOverlay.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.closeMenu();
+        });
+        
+        // Event listener untuk link di dalam menu
+        const menuLinks = navLinks.querySelectorAll('a');
+        menuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                this.closeMenu();
+            });
+        });
+        
+        // Event listener untuk resize window (tutup menu di desktop)
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 767 && this.isMenuOpen) {
+                this.closeMenu();
+            }
+        });
+    },
+    
+    toggleMenu: function() {
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+        const navLinks = document.getElementById('navLinks');
+        const menuOverlay = document.getElementById('menuOverlay');
+        
+        if (this.isMenuOpen) {
+            this.closeMenu();
+        } else {
+            this.openMenu();
+        }
+    },
+    
+    openMenu: function() {
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+        const navLinks = document.getElementById('navLinks');
+        const menuOverlay = document.getElementById('menuOverlay');
+        
+        hamburgerMenu.classList.add('active');
+        navLinks.classList.add('active');
+        menuOverlay.classList.add('active');
+        document.body.classList.add('menu-active');
+        
+        this.isMenuOpen = true;
+    },
+    
+    closeMenu: function() {
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+        const navLinks = document.getElementById('navLinks');
+        const menuOverlay = document.getElementById('menuOverlay');
+        
+        hamburgerMenu.classList.remove('active');
+        navLinks.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        document.body.classList.remove('menu-active');
+        
+        this.isMenuOpen = false;
+    }
+};
+
+// Inisialisasi semua fungsi saat DOM loaded
 document.addEventListener('DOMContentLoaded', function() {
-    UploadManager.init();
+    // Upload Manager untuk halaman upload
+    if (document.querySelector('.upload-page')) {
+        UploadManager.init();
+    }
+    
+    // Mobile Menu Manager untuk semua halaman
+    MobileMenuManager.init();
+    
+    // Back to Top Button (existing code)
+    const backToTopButton = document.getElementById('backToTop');
+    
+    if (backToTopButton) {
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTopButton.style.display = 'block';
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.style.display = 'none';
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+
+    // Animasi fade-in (existing code)
+    const fadeElements = document.querySelectorAll('.fade-in');
+    
+    const checkFade = () => {
+        fadeElements.forEach(element => {
+            const elementTop = element.getBoundingClientRect().top;
+            const elementVisible = 150;
+            
+            if (elementTop < window.innerHeight - elementVisible) {
+                element.classList.add('visible');
+            }
+        });
+    };
+    
+    window.addEventListener('scroll', checkFade);
+    checkFade(); // Check on load
 });
