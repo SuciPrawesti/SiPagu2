@@ -582,3 +582,83 @@ $(function() {
     });
   }
 });
+
+// ===========================================
+// SIDEBAR DYNAMIC FOOTER ADJUSTMENT
+// ===========================================
+
+$(function() {
+    // Function to adjust sidebar footer position
+    function adjustSidebarFooter() {
+        const $sidebarMenu = $('.sidebar-menu');
+        const $sidebarFooter = $('.sidebar-footer');
+        const $openDropdowns = $sidebarMenu.find('.dropdown.show');
+        
+        if ($openDropdowns.length > 0) {
+            // Calculate total height of open dropdowns
+            let dropdownsHeight = 0;
+            $openDropdowns.each(function() {
+                const $dropdownMenu = $(this).find('.dropdown-menu');
+                if ($dropdownMenu.is(':visible')) {
+                    dropdownsHeight += $dropdownMenu.outerHeight(true);
+                }
+            });
+            
+            // Add margin to footer based on dropdowns height
+            $sidebarFooter.css('margin-top', Math.max(dropdownsHeight, 0) + 'px');
+        } else {
+            // Reset margin when no dropdowns are open
+            $sidebarFooter.css('margin-top', '');
+        }
+        
+        // Adjust menu max-height based on window size
+        const windowHeight = $(window).height();
+        const footerHeight = $sidebarFooter.outerHeight(true);
+        const headerHeight = $('.sidebar-brand').outerHeight(true) || 60;
+        const padding = 20;
+        
+        const maxMenuHeight = windowHeight - footerHeight - headerHeight - padding;
+        $sidebarMenu.css('max-height', Math.max(maxMenuHeight, 200) + 'px');
+    }
+    
+    // Initialize on page load
+    setTimeout(adjustSidebarFooter, 100);
+    
+    // Adjust on window resize
+    $(window).on('resize', adjustSidebarFooter);
+    
+    // Adjust when dropdown is toggled
+    $(document).on('click', '.nav-link.has-dropdown', function(e) {
+        // Use setTimeout to wait for dropdown animation
+        setTimeout(adjustSidebarFooter, 350);
+    });
+    
+    // Adjust when clicking outside dropdown
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.dropdown').length) {
+            setTimeout(adjustSidebarFooter, 100);
+        }
+    });
+    
+    // Mutation observer for dropdown changes
+    if (typeof MutationObserver !== 'undefined') {
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' || mutation.type === 'attributes') {
+                    setTimeout(adjustSidebarFooter, 50);
+                }
+            });
+        });
+        
+        // Observe sidebar menu for changes
+        const $sidebarMenu = $('.sidebar-menu');
+        if ($sidebarMenu.length) {
+            observer.observe($sidebarMenu[0], {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['class']
+            });
+        }
+    }
+});
