@@ -38,7 +38,7 @@
             <!-- ================= UPLOADS ================= -->
             <li class="menu-header">Uploads Excel</li>
             <?php 
-            $upload_pages = ['upload_user', 'upload_panitia', 'upload_tu', 'upload_tpata', 'upload_thd', 'upload_jadwal'];
+            $upload_pages = ['upload_user', 'upload_panitia', 'upload_tu', 'upload_tpata', 'upload_thd', 'upload_jadwal', 'upload_honor_dosen'];
             $is_upload_page = in_array(basename($_SERVER['PHP_SELF'], '.php'), $upload_pages);
             ?>
             <li class="dropdown <?= $is_upload_page ? 'active' : ''; ?>">
@@ -60,6 +60,9 @@
                     </li>
                     <li class="<?= basename($_SERVER['PHP_SELF']) === 'upload_jadwal.php' ? 'active' : ''; ?>">
                         <a class="nav-link" href="<?= BASE_URL ?>admin/upload_jadwal.php">Upload Jadwal</a>
+                    </li>
+                    <li class="<?= basename($_SERVER['PHP_SELF']) === 'upload_honor_dosen.php' ? 'active' : ''; ?>">
+                        <a class="nav-link" href="<?= BASE_URL ?>admin/upload_honor_dosen.php">Upload Honor Dosen</a>
                     </li>
                 </ul>
             </li>
